@@ -19,6 +19,8 @@ connectDB();
 
 const app = express();
 
+console.log("Server file loaded successfully");
+
 // Middleware
 app.use(
   cors({
@@ -29,11 +31,6 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Routes
-app.use("/api/auth", require("./routes/authRoutes"));
-app.use("/api/transactions", require("./routes/transactionRoutes"));
-app.use("/api/ai", require("./routes/aiRoutes"));
-
 app.get("/", (req, res) => {
   res.send("SERVER WORKING");
 });
@@ -41,6 +38,11 @@ app.get("/", (req, res) => {
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok" });
 });
+
+// Routes
+app.use("/api/auth", require("./routes/authRoutes"));
+app.use("/api/transactions", require("./routes/transactionRoutes"));
+app.use("/api/ai", require("./routes/aiRoutes"));
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -62,9 +64,9 @@ app.use((err, req, res, next) => {
 });
 
 // Handle 404
-app.use((req, res) => {
-  res.status(404).json({ message: "Route not found" });
-});
+// app.use((req, res) => {
+//   res.status(404).json({ message: "Route not found" });
+// });
 
 const PORT = process.env.PORT || 12000;
 
