@@ -33,8 +33,8 @@ app.use('/api/transactions', require('./routes/transactionRoutes'));
 app.use('/api/ai', require('./routes/aiRoutes'));
 
 // Health check endpoint
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'Finance Advisor API is running' });
+app.get("/api/health", (req, res) => {
+  res.json({ status: "ok" });
 });
 
 // Error handling middleware
