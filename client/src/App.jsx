@@ -5,8 +5,8 @@ import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
-import Login from './pages/Login';
-import Register from './pages/Register';
+import AuthModal from './components/AuthModal';
+
 import Dashboard from './pages/Dashboard';
 import Transactions from './pages/Transactions';
 import Insights from './pages/Insights';
@@ -18,12 +18,12 @@ function App() {
     <AuthProvider>
       <Router>
         <div className="app">
-          <Navbar />
+          <Navbar />\n          <AuthModal />
           <main className="main-content">
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
+              <Route path="/login" element={<Navigate to="/?modal=login" replace />} />
+              <Route path="/register" element={<Navigate to="/?modal=register" replace />} />
               <Route
                 path="/dashboard"
                 element={
@@ -69,7 +69,7 @@ function App() {
             pauseOnFocusLoss
             draggable
             pauseOnHover
-            theme="light"
+            theme="dark"
           />
         </div>
       </Router>

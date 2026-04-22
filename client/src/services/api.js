@@ -62,4 +62,24 @@ export const aiService = {
   getSavingTips: () => api.post('/ai/saving-tips')
 };
 
+export const getAIInsights = () => api.post('/ai/insights');
+
+export const getApiErrorMessage = (error, fallback = 'Something went wrong') => {
+  const responseData = error?.response?.data;
+
+  if (typeof responseData?.message === 'string' && responseData.message.trim()) {
+    return responseData.message;
+  }
+
+  if (Array.isArray(responseData?.errors) && responseData.errors.length > 0) {
+    return responseData.errors.map((entry) => entry.msg).join(', ');
+  }
+
+  if (error?.request && !error?.response) {
+    return 'Cannot connect to the backend. Make sure the server is running on port 12000.';
+  }
+
+  return fallback;
+};
+
 export default api;

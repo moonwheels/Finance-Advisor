@@ -8,14 +8,14 @@ const Home = () => {
         <div className="hero-content">
           <h1>Take Control of Your <span className="highlight">Finances</span></h1>
           <p>
-            AI-powered personal finance advisor that helps you understand spending patterns, 
+            AI-powered personal finance advisor that helps you understand spending patterns,
             create budgets, and achieve your financial goals.
           </p>
           <div className="hero-buttons">
-            <Link to="/register" className="btn btn-primary btn-lg">
+            <Link to="/?modal=register" className="btn btn-primary btn-lg">
               Get Started Free
             </Link>
-            <Link to="/login" className="btn btn-outline btn-lg">
+            <Link to="/?modal=login" className="btn btn-outline btn-lg">
               Sign In
             </Link>
           </div>
@@ -88,7 +88,7 @@ const Home = () => {
             <div className="feature-icon">
               <FiShield />
             </div>
-            <h3>Secure & Private</h3>
+            <h3>Secure and Private</h3>
             <p>Your financial data is encrypted and secure. We never share your information.</p>
           </div>
         </div>
@@ -97,13 +97,13 @@ const Home = () => {
       <section className="cta">
         <h2>Ready to Transform Your Finances?</h2>
         <p>Join thousands of users who have taken control of their financial future.</p>
-        <Link to="/register" className="btn btn-primary btn-lg">
+        <Link to="/?modal=register" className="btn btn-primary btn-lg">
           Start Your Journey
         </Link>
       </section>
 
       <footer className="home-footer">
-        <p>© 2024 FinanceAI. Built with MERN Stack & OpenAI.</p>
+        <p>(c) 2024 FinanceAI. Built with MERN Stack and OpenAI.</p>
       </footer>
     </div>
   );

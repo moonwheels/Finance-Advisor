@@ -24,6 +24,18 @@ const CATEGORIES = {
   ]
 };
 
+const padDatePart = (value) => String(value).padStart(2, '0');
+
+const formatDateTimeInput = (value = new Date()) => {
+  const date = new Date(value);
+
+  return [
+    date.getFullYear(),
+    padDatePart(date.getMonth() + 1),
+    padDatePart(date.getDate())
+  ].join('-') + `T${padDatePart(date.getHours())}:${padDatePart(date.getMinutes())}`;
+};
+
 const Transactions = () => {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -48,7 +60,7 @@ const Transactions = () => {
     amount: '',
     type: 'expense',
     category: 'Food & Dining',
-    date: new Date().toISOString().split('T')[0],
+    date: formatDateTimeInput(),
     notes: ''
   });
 
@@ -85,13 +97,18 @@ const Transactions = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const payload = {
+      ...formData,
+      date: formData.date ? new Date(formData.date).toISOString() : undefined
+    };
     
     try {
       if (editingTransaction) {
-        await transactionService.update(editingTransaction._id, formData);
+        await transactionService.update(editingTransaction._id, payload);
         toast.success('Transaction updated');
       } else {
-        await transactionService.create(formData);
+        await transactionService.create(payload);
         toast.success('Transaction added');
       }
       
@@ -122,7 +139,7 @@ const Transactions = () => {
       amount: transaction.amount,
       type: transaction.type,
       category: transaction.category,
-      date: new Date(transaction.date).toISOString().split('T')[0],
+      date: formatDateTimeInput(transaction.date),
       notes: transaction.notes || ''
     });
     setShowModal(true);
@@ -156,7 +173,7 @@ const Transactions = () => {
       amount: '',
       type: 'expense',
       category: 'Food & Dining',
-      date: new Date().toISOString().split('T')[0],
+      date: formatDateTimeInput(),
       notes: ''
     });
     setEditingTransaction(null);
@@ -180,10 +197,12 @@ const Transactions = () => {
   };
 
   const formatDate = (date) => {
-    return new Date(date).toLocaleDateString('en-US', {
+    return new Date(date).toLocaleString('en-US', {
       year: 'numeric',
       month: 'short',
-      day: 'numeric'
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit'
     });
   };
 
@@ -449,9 +468,9 @@ const Transactions = () => {
                 </div>
 
                 <div className="form-group">
-                  <label>Date</label>
+                  <label>Date & Time</label>
                   <input
-                    type="date"
+                    type="datetime-local"
                     value={formData.date}
                     onChange={(e) => setFormData({ ...formData, date: e.target.value })}
                     required

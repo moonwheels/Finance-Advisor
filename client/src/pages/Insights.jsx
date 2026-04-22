@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { aiService } from '../services/api';
 import { toast } from 'react-toastify';
 import { FiTrendingUp, FiAlertCircle, FiCheckCircle, FiTarget, FiDollarSign, FiPieChart, FiRefreshCw } from 'react-icons/fi';
+import { clampScore, getScoreColor, parseAIInsightsResponse } from '../utils/aiInsights';
 
 const Insights = () => {
   const [insights, setInsights] = useState(null);
@@ -28,7 +29,7 @@ const Insights = () => {
     try {
       setLoading(prev => ({ ...prev, insights: true }));
       const response = await aiService.getInsights();
-      setInsights(response.data);
+      setInsights(parseAIInsightsResponse(response.data));
     } catch (error) {
       toast.error('Failed to load insights');
     } finally {
@@ -82,73 +83,126 @@ const Insights = () => {
       return <p className="no-data">No insights available</p>;
     }
 
-    const { insights: data, source } = insights;
+    const ecoScore = clampScore(insights.ecoScore);
+    const wellbeingScore = clampScore(insights.wellbeingScore);
+    const ecoScoreColor = getScoreColor(ecoScore);
+    const wellbeingScoreColor = getScoreColor(wellbeingScore);
+    const ecoScoreWidth = ecoScore ?? 0;
+    const wellbeingScoreWidth = wellbeingScore ?? 0;
 
     return (
       <div className="insights-content">
-        {source && (
-          <div className="source-badge">
-            Powered by {source === 'openai' ? 'AI' : 'Smart Analysis'}
-          </div>
-        )}
-
         <div className="insight-card health">
           <div className="insight-header">
             <FiTrendingUp className="insight-icon" />
-            <h3>Financial Health Assessment</h3>
+            <h3>Behavior Pattern</h3>
           </div>
-          <p>{data.healthAssessment}</p>
+          <p>{insights.behavior || 'No behavior pattern returned yet.'}</p>
         </div>
 
         <div className="insights-grid">
           <div className="insight-card concerns">
             <div className="insight-header">
               <FiAlertCircle className="insight-icon" />
-              <h3>Areas of Concern</h3>
+              <h3>Eco Score</h3>
             </div>
-            <ul>
-              {data.concerns?.length > 0 ? (
-                data.concerns.map((concern, index) => (
-                  <li key={index}>{concern}</li>
-                ))
-              ) : (
-                <li>No major concerns identified</li>
-              )}
-            </ul>
+            <div className="score-meter" style={{ marginTop: '0.5rem' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  gap: '0.75rem',
+                  marginBottom: '0.75rem'
+                }}
+              >
+                <span style={{ fontWeight: 700, color: ecoScoreColor }}>
+                  {typeof ecoScore === 'number' ? `${ecoScore}%` : 'N/A'}
+                </span>
+                <span style={{ color: 'var(--text-muted)' }}>{insights.ecoLabel}</span>
+              </div>
+              <div
+                style={{
+                  height: '10px',
+                  backgroundColor: 'var(--bg-card)',
+                  borderRadius: '999px',
+                  overflow: 'hidden'
+                }}
+              >
+                <div
+                  style={{
+                    width: `${ecoScoreWidth}%`,
+                    height: '100%',
+                    borderRadius: '999px',
+                    backgroundColor: ecoScoreColor
+                  }}
+                />
+              </div>
+            </div>
           </div>
 
           <div className="insight-card positives">
             <div className="insight-header">
               <FiCheckCircle className="insight-icon" />
-              <h3>Positive Observations</h3>
+              <h3>Wellbeing Score</h3>
             </div>
-            <ul>
-              {data.positives?.length > 0 ? (
-                data.positives.map((positive, index) => (
-                  <li key={index}>{positive}</li>
-                ))
-              ) : (
-                <li>Keep tracking to see positive trends</li>
-              )}
-            </ul>
+            <div className="score-meter" style={{ marginTop: '0.5rem' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  gap: '0.75rem',
+                  marginBottom: '0.75rem'
+                }}
+              >
+                <span style={{ fontWeight: 700, color: wellbeingScoreColor }}>
+                  {typeof wellbeingScore === 'number' ? `${wellbeingScore}%` : 'N/A'}
+                </span>
+                <span style={{ color: 'var(--text-muted)' }}>{insights.wellbeingLabel}</span>
+              </div>
+              <div
+                style={{
+                  height: '10px',
+                  backgroundColor: 'var(--bg-card)',
+                  borderRadius: '999px',
+                  overflow: 'hidden'
+                }}
+              >
+                <div
+                  style={{
+                    width: `${wellbeingScoreWidth}%`,
+                    height: '100%',
+                    borderRadius: '999px',
+                    backgroundColor: wellbeingScoreColor
+                  }}
+                />
+              </div>
+            </div>
           </div>
         </div>
 
         <div className="insight-card recommendations">
           <div className="insight-header">
             <FiTarget className="insight-icon" />
-            <h3>Recommendations</h3>
+            <h3>Honest Insight</h3>
           </div>
-          <ul>
-            {data.recommendations?.length > 0 ? (
-              data.recommendations.map((rec, index) => (
-                <li key={index}>{rec}</li>
-              ))
-            ) : (
-              <li>Add more transactions to get personalized recommendations</li>
-            )}
-          </ul>
+          <p>{insights.insight || insights.rawText || 'Add more transactions to get personalized recommendations.'}</p>
         </div>
+
+        {insights.suggestions?.length > 0 && (
+          <div className="insight-card recommendations">
+            <div className="insight-header">
+              <FiTarget className="insight-icon" />
+              <h3>Suggestions</h3>
+            </div>
+            <ul>
+              {insights.suggestions.map((suggestion, index) => (
+                <li key={`${suggestion}-${index}`}>{suggestion}</li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
     );
   };

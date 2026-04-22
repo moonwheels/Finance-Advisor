@@ -8,7 +8,12 @@
     "dev": "node index.js",
     "seed": "node seed.js"
   },
-  "keywords": ["finance", "mern", "openai", "personal-finance"],
+  "keywords": [
+    "finance",
+    "mern",
+    "openai",
+    "personal-finance"
+  ],
   "author": "",
   "license": "MIT",
   "dependencies": {
@@ -21,6 +26,6 @@
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.1.4",
     "multer": "^2.0.2",
-    "openai": "^6.16.0"
+    "openai": "^6.34.0"
   }
 }
