@@ -1,4 +1,3 @@
-console.log("🔥 THIS IS MY SERVER FILE RUNNING");
 
 const express = require("express");
 const cors = require("cors");
@@ -33,9 +32,7 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get("/", (req, res) => {
-  res.send("SERVER WORKING");
-});
+
 // Health check endpoint
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok" });
@@ -65,9 +62,6 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: "Server Error" });
 });
 
-app.get("/test", (req, res) => {
-  res.send("TEST ROUTE WORKING");
-});
 
 // Handle 404
 app.use((req, res) => {
