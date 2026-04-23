@@ -148,7 +148,7 @@ const Home = () => {
       </section>
 
       <footer className='home-footer'>
-        <p>(c) 2024 FinanceAI. Built with MERN Stack and OpenAI.</p>
+        <p>(c) 2024 SpendSense. Built with MERN Stack and OpenAI.</p>
       </footer>
     </div>
   );

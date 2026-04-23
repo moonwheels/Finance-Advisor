@@ -363,7 +363,7 @@ const Navbar = () => {
             <span className="neon-public-brand-badge">
               <CircleDollarSign size={18} />
             </span>
-            <span>FinanceAI</span>
+            <span>SpendSense</span>
           </Link>
 
           <div className="neon-public-actions">
@@ -384,7 +384,7 @@ const Navbar = () => {
           <span className="neon-mobile-brand-badge">
             <CircleDollarSign size={18} />
           </span>
-          <span>FinanceAI</span>
+          <span>SpendSense</span>
         </Link>
 
         <button
@@ -404,7 +404,7 @@ const Navbar = () => {
             <CircleDollarSign size={18} />
           </span>
           <div className="neon-sidebar-brand-copy">
-            <strong>FinanceAI</strong>
+            <strong>SpendSense</strong>
             <span>Neon Wealth Console</span>
           </div>
         </div>
