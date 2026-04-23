@@ -3,7 +3,6 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
   ArrowLeftRight,
-  CircleDollarSign,
   LayoutDashboard,
   LogOut,
   Menu,
@@ -45,23 +44,25 @@ const publicShellStyles = `
   .neon-public-brand {
     display: inline-flex;
     align-items: center;
-    gap: 0.75rem;
     color: var(--text);
     text-decoration: none;
-    font-weight: 700;
-    letter-spacing: 0.02em;
   }
 
-  .neon-public-brand-badge {
-    width: 2.25rem;
-    height: 2.25rem;
+  .brand-wordmark {
     display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 999px;
-    background: var(--accent-soft);
-    color: var(--accent);
-    box-shadow: 0 0 0 1px var(--bg-card);
+    align-items: baseline;
+    font-size: 1.45rem;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--text);
+  }
+
+  .brand-dollar {
+    color: #16a34a;
+    font-size: 1.25em;
+    font-weight: 900;
+    line-height: 0.85;
+    margin-left: 0.02em;
   }
 
   .neon-public-actions {
@@ -130,33 +131,32 @@ const authShellStyles = `
     border-bottom: 1px solid var(--border);
   }
 
-  .neon-sidebar-brand-icon {
-    width: 2.7rem;
-    height: 2.7rem;
-    border-radius: 1rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--accent-soft);
-    color: var(--accent);
-    box-shadow: 0 0 0 1px var(--bg-card);
-  }
-
   .neon-sidebar-brand-copy {
     display: flex;
     flex-direction: column;
     gap: 0.2rem;
   }
 
-  .neon-sidebar-brand-copy strong {
-    font-size: 1.05rem;
+  .brand-wordmark {
+    display: inline-flex;
+    align-items: baseline;
+    font-size: 1.45rem;
+    font-weight: 800;
+    line-height: 1;
     color: var(--text);
-    letter-spacing: 0.02em;
   }
 
-  .neon-sidebar-brand-copy span {
-    color: var(--text-muted);
-    font-size: 0.82rem;
+  .brand-dollar {
+    color: #16a34a;
+    font-size: 1.25em;
+    font-weight: 900;
+    line-height: 0.85;
+    margin-left: 0.02em;
+  }
+
+  .neon-sidebar-brand-copy strong {
+    font-size: 1.35rem;
+    color: var(--text);
   }
 
   .neon-sidebar-nav {
@@ -278,22 +278,12 @@ const authShellStyles = `
     .neon-mobile-brand {
       display: inline-flex;
       align-items: center;
-      gap: 0.7rem;
       color: var(--text);
       text-decoration: none;
-      font-weight: 700;
     }
 
-    .neon-mobile-brand-badge {
-      width: 2.15rem;
-      height: 2.15rem;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 999px;
-      background: var(--accent-soft);
-      color: var(--accent);
-      box-shadow: 0 0 0 1px var(--bg-card);
+    .brand-wordmark {
+      font-size: 1.3rem;
     }
 
     .neon-mobile-trigger {
@@ -330,6 +320,14 @@ const authShellStyles = `
   }
 `;
 
+const BrandName = () => (
+  <span className="brand-wordmark" aria-label="SpendSense">
+    <span>Spend</span>
+    <span className="brand-dollar" aria-hidden="true">$</span>
+    <span>ense</span>
+  </span>
+);
+
 const Navbar = () => {
   const { user, logout, isAuthenticated } = useAuth();
   const navigate = useNavigate();
@@ -360,10 +358,7 @@ const Navbar = () => {
         <style>{publicShellStyles}</style>
         <header className="neon-public-shell">
           <Link to="/" className="neon-public-brand">
-            <span className="neon-public-brand-badge">
-              <CircleDollarSign size={18} />
-            </span>
-            <span>SpendSense</span>
+            <BrandName />
           </Link>
 
           <div className="neon-public-actions">
@@ -381,10 +376,7 @@ const Navbar = () => {
 
       <header className="neon-mobile-header">
         <Link to="/dashboard" className="neon-mobile-brand">
-          <span className="neon-mobile-brand-badge">
-            <CircleDollarSign size={18} />
-          </span>
-          <span>SpendSense</span>
+          <BrandName />
         </Link>
 
         <button
@@ -400,12 +392,8 @@ const Navbar = () => {
 
       <aside className={`neon-sidebar ${mobileMenuOpen ? 'open' : ''}`}>
         <div className="neon-sidebar-brand">
-          <span className="neon-sidebar-brand-icon">
-            <CircleDollarSign size={18} />
-          </span>
           <div className="neon-sidebar-brand-copy">
-            <strong>SpendSense</strong>
-            <span>Neon Wealth Console</span>
+            <strong><BrandName /></strong>
           </div>
         </div>
 

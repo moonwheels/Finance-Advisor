@@ -54,7 +54,7 @@ const Dashboard = () => {
 
       setStats(statsRes.data);
       setRecentTransactions(transactionsRes.data.transactions);
-    } catch (error) {
+    } catch {
       toast.error('Failed to load dashboard data');
     } finally {
       setLoading(false);
