@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { aiService } from '../services/api';
 import { toast } from 'react-toastify';
 import { FiTrendingUp, FiAlertCircle, FiCheckCircle, FiTarget, FiDollarSign, FiPieChart, FiRefreshCw } from 'react-icons/fi';
-import { clampScore, getScoreColor, parseAIInsightsResponse } from '../utils/aiInsights';
+import { clampScore, parseAIInsightsResponse } from '../utils/aiInsights';
 
 const Insights = () => {
   const [insights, setInsights] = useState(null);
@@ -69,6 +69,19 @@ const Insights = () => {
     }).format(amount);
   };
 
+  const getEcoScoreClass = (score) => {
+    if (typeof score !== 'number') return 'score-value neutral';
+    if (score < 40) return 'score-value eco low';
+    if (score < 70) return 'score-value eco medium';
+    return 'score-value eco good';
+  };
+
+  const getWellbeingScoreClass = (score) => {
+    if (typeof score !== 'number') return 'score-value neutral';
+    if (score < 60) return 'score-value wellbeing low';
+    return 'score-value wellbeing good';
+  };
+
   const renderInsightsTab = () => {
     if (loading.insights) {
       return (
@@ -85,96 +98,66 @@ const Insights = () => {
 
     const ecoScore = clampScore(insights.ecoScore);
     const wellbeingScore = clampScore(insights.wellbeingScore);
-    const ecoScoreColor = getScoreColor(ecoScore);
-    const wellbeingScoreColor = getScoreColor(wellbeingScore);
     const ecoScoreWidth = ecoScore ?? 0;
     const wellbeingScoreWidth = wellbeingScore ?? 0;
 
     return (
       <div className="insights-content">
-        <div className="insight-card health">
+        <div className="insight-card health premium-card insight-emphasis">
           <div className="insight-header">
-            <FiTrendingUp className="insight-icon" />
+            <span className="insight-icon-wrap insight-icon-wrap-blue">
+              <FiTrendingUp className="insight-icon" />
+            </span>
             <h3>Behavior Pattern</h3>
           </div>
           <p>{insights.behavior || 'No behavior pattern returned yet.'}</p>
         </div>
 
         <div className="insights-grid">
-          <div className="insight-card concerns">
+          <div className="insight-card concerns premium-card score-card eco-score-card">
             <div className="insight-header">
-              <FiAlertCircle className="insight-icon" />
+              <span className="insight-icon-wrap insight-icon-wrap-green">
+                <FiAlertCircle className="insight-icon" />
+              </span>
               <h3>Eco Score</h3>
             </div>
             <div className="score-meter" style={{ marginTop: '0.5rem' }}>
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  gap: '0.75rem',
-                  marginBottom: '0.75rem'
-                }}
-              >
-                <span style={{ fontWeight: 700, color: ecoScoreColor }}>
+              <div className="score-row">
+                <span className={getEcoScoreClass(ecoScore)}>
                   {typeof ecoScore === 'number' ? `${ecoScore}%` : 'N/A'}
                 </span>
-                <span style={{ color: 'var(--text-muted)' }}>{insights.ecoLabel}</span>
+                <span className="score-label">{insights.ecoLabel}</span>
               </div>
-              <div
-                style={{
-                  height: '10px',
-                  backgroundColor: 'var(--bg-card)',
-                  borderRadius: '999px',
-                  overflow: 'hidden'
-                }}
-              >
+              <div className="score-progress-track">
                 <div
+                  className="score-progress-fill eco"
                   style={{
-                    width: `${ecoScoreWidth}%`,
-                    height: '100%',
-                    borderRadius: '999px',
-                    backgroundColor: ecoScoreColor
+                    width: `${ecoScoreWidth}%`
                   }}
                 />
               </div>
             </div>
           </div>
 
-          <div className="insight-card positives">
+          <div className="insight-card positives premium-card score-card wellbeing-score-card">
             <div className="insight-header">
-              <FiCheckCircle className="insight-icon" />
+              <span className="insight-icon-wrap insight-icon-wrap-orange">
+                <FiCheckCircle className="insight-icon" />
+              </span>
               <h3>Wellbeing Score</h3>
             </div>
             <div className="score-meter" style={{ marginTop: '0.5rem' }}>
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  gap: '0.75rem',
-                  marginBottom: '0.75rem'
-                }}
-              >
-                <span style={{ fontWeight: 700, color: wellbeingScoreColor }}>
+              <div className="score-row">
+                <span className={getWellbeingScoreClass(wellbeingScore)}>
                   {typeof wellbeingScore === 'number' ? `${wellbeingScore}%` : 'N/A'}
                 </span>
-                <span style={{ color: 'var(--text-muted)' }}>{insights.wellbeingLabel}</span>
+                <span className="score-label">{insights.wellbeingLabel}</span>
               </div>
-              <div
-                style={{
-                  height: '10px',
-                  backgroundColor: 'var(--bg-card)',
-                  borderRadius: '999px',
-                  overflow: 'hidden'
-                }}
-              >
+              <div className="score-progress-track">
                 <div
+                  className="score-progress-fill wellbeing"
                   style={{
-                    width: `${wellbeingScoreWidth}%`,
-                    height: '100%',
-                    borderRadius: '999px',
-                    backgroundColor: wellbeingScoreColor
+                    width: `${wellbeingScoreWidth}%`
                   }}
                 />
               </div>
@@ -182,23 +165,30 @@ const Insights = () => {
           </div>
         </div>
 
-        <div className="insight-card recommendations">
+        <div className="insight-card recommendations premium-card insight-card-blue insight-emphasis">
           <div className="insight-header">
-            <FiTarget className="insight-icon" />
+            <span className="insight-icon-wrap insight-icon-wrap-blue">
+              <FiTarget className="insight-icon" />
+            </span>
             <h3>Honest Insight</h3>
           </div>
           <p>{insights.insight || insights.rawText || 'Add more transactions to get personalized recommendations.'}</p>
         </div>
 
         {insights.suggestions?.length > 0 && (
-          <div className="insight-card recommendations">
+          <div className="insight-card recommendations premium-card suggestions-card">
             <div className="insight-header">
-              <FiTarget className="insight-icon" />
+              <span className="insight-icon-wrap insight-icon-wrap-green">
+                <FiTarget className="insight-icon" />
+              </span>
               <h3>Suggestions</h3>
             </div>
             <ul>
               {insights.suggestions.map((suggestion, index) => (
-                <li key={`${suggestion}-${index}`}>{suggestion}</li>
+                <li key={`${suggestion}-${index}`}>
+                  <FiCheckCircle className="suggestion-check" />
+                  <span>{suggestion}</span>
+                </li>
               ))}
             </ul>
           </div>

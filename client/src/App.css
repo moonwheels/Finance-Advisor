@@ -697,58 +697,121 @@ a {
 }
 
 .dashboard-ai-score {
-  padding: 1rem;
-  border-radius: 16px;
-  border: 1px solid var(--border);
-  background: var(--bg-card-strong);
+  padding: 1.5rem;
+  border-radius: 1rem;
+  border: 1px solid #f3f4f6;
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dashboard-ai-score:hover {
+  transform: scale(1.02);
+  box-shadow: 0 20px 32px rgba(15, 23, 42, 0.14);
 }
 
 .dashboard-ai-score-label {
-  color: var(--text-muted);
-  font-size: 0.85rem;
+  color: #1f2937;
+  font-size: 1.125rem;
+  font-weight: 600;
 }
 
 .dashboard-ai-score-value {
   margin-top: 0.45rem;
-  font-size: 1.45rem;
+  font-size: 1.5rem;
   font-weight: 700;
 }
 
 .dashboard-progress {
-  height: 8px;
+  height: 0.75rem;
   margin-top: 0.8rem;
   border-radius: 999px;
-  background: rgba(143, 162, 154, 0.14);
+  background: #e5e7eb;
   overflow: hidden;
 }
 
 .dashboard-progress-bar {
   height: 100%;
   border-radius: 999px;
+  transition: width 0.5s ease;
+}
+
+.dashboard-progress-bar.eco {
+  background: linear-gradient(90deg, #f87171 0%, #dc2626 100%);
+}
+
+.dashboard-progress-bar.wellbeing {
+  background: linear-gradient(90deg, #fb923c 0%, #ea580c 100%);
 }
 
 .dashboard-advice {
   margin-top: 1rem;
-  padding: 1rem 1.1rem;
-  border-radius: 16px;
-  background: var(--bg-card-strong);
-  color: var(--text-soft);
+  padding: 1.5rem;
+  border-radius: 1rem;
+  border: 1px solid #f3f4f6;
+  border-left: 4px solid #22c55e;
+  background: linear-gradient(90deg, #eff6ff 0%, #ffffff 100%);
+  color: #4b5563;
+  line-height: 1.7;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dashboard-advice:hover {
+  transform: scale(1.02);
+  box-shadow: 0 20px 32px rgba(15, 23, 42, 0.14);
 }
 
 .dashboard-advice strong {
   display: block;
   margin-bottom: 0.5rem;
-  color: var(--text);
+  color: #1f2937;
+  font-size: 1.125rem;
+  font-weight: 600;
 }
 
 .dashboard-suggestions {
   margin-top: 1rem;
-  padding-left: 1rem;
-  color: var(--text-soft);
+  display: grid;
+  gap: 0.75rem;
+  padding-left: 0;
+  color: #4b5563;
+  list-style: none;
 }
 
 .dashboard-suggestions li + li {
-  margin-top: 0.45rem;
+  margin-top: 0;
+}
+
+.dashboard-suggestions li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background: #f9fafb;
+  line-height: 1.7;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.dashboard-suggestions li::before {
+  content: "✓";
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 1.35rem;
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 999px;
+  background: #dcfce7;
+  color: #16a34a;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.dashboard-suggestions li:hover {
+  transform: scale(1.02);
+  background: #f3f4f6;
 }
 
 .dashboard-list {
@@ -1080,7 +1143,36 @@ a {
 .budget-section,
 .spending-overview,
 .tip-card {
-  padding: 1.35rem;
+  padding: 1.5rem;
+}
+
+.premium-card {
+  border: 1px solid #f3f4f6;
+  border-radius: 1rem;
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.premium-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 20px 32px rgba(15, 23, 42, 0.14);
+}
+
+.eco-score-card {
+  background: linear-gradient(90deg, #f0fdf4 0%, #ffffff 100%);
+}
+
+.wellbeing-score-card {
+  background: linear-gradient(90deg, #fff7ed 0%, #ffffff 100%);
+}
+
+.insight-card-blue {
+  background: linear-gradient(90deg, #eff6ff 0%, #ffffff 100%);
+}
+
+.insight-emphasis {
+  border-left: 4px solid #22c55e;
 }
 
 .insights-content,
@@ -1097,9 +1189,45 @@ a {
   margin-bottom: 0.9rem;
 }
 
+.insight-header h3 {
+  color: #1f2937;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.insight-icon-wrap {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 2.5rem;
+  border-radius: 999px;
+}
+
+.insight-icon-wrap-green {
+  background: #dcfce7;
+}
+
+.insight-icon-wrap-orange {
+  background: #ffedd5;
+}
+
+.insight-icon-wrap-blue {
+  background: #dbeafe;
+}
+
 .insight-icon,
 .summary-icon {
   color: var(--accent);
+}
+
+.insight-icon-wrap-orange .insight-icon {
+  color: #f97316;
+}
+
+.insight-icon-wrap-blue .insight-icon {
+  color: #2563eb;
 }
 
 .insight-card p,
@@ -1109,7 +1237,70 @@ a {
 .tip-card p,
 .reduction-item span,
 .summary-card p {
-  color: var(--text-soft);
+  color: #4b5563;
+  line-height: 1.7;
+}
+
+.score-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.score-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.score-value.eco.low {
+  color: #ef4444;
+}
+
+.score-value.eco.medium {
+  color: #eab308;
+}
+
+.score-value.eco.good,
+.score-value.wellbeing.good {
+  color: #16a34a;
+}
+
+.score-value.wellbeing.low {
+  color: #f97316;
+}
+
+.score-value.neutral {
+  color: #6b7280;
+}
+
+.score-label {
+  color: #4b5563;
+  line-height: 1.5;
+  text-align: right;
+}
+
+.score-progress-track {
+  height: 0.75rem;
+  border-radius: 999px;
+  background: #e5e7eb;
+  overflow: hidden;
+}
+
+.score-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.5s ease;
+}
+
+.score-progress-fill.eco {
+  background: linear-gradient(90deg, #f87171 0%, #dc2626 100%);
+}
+
+.score-progress-fill.wellbeing {
+  background: linear-gradient(90deg, #fb923c 0%, #ea580c 100%);
 }
 
 .insight-card ul {
@@ -1120,10 +1311,25 @@ a {
 }
 
 .insight-card li {
-  padding: 0.9rem 1rem;
-  border-radius: 14px;
-  background: var(--bg-card-strong);
-  border: 1px solid var(--bg-card-strong);
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background: #f9fafb;
+  border: 1px solid transparent;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.insight-card li:hover {
+  transform: scale(1.02);
+  background: #f3f4f6;
+}
+
+.suggestion-check {
+  flex: 0 0 auto;
+  margin-top: 0.18rem;
+  color: #16a34a;
 }
 
 .insights-grid {

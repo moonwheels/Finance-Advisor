@@ -211,7 +211,7 @@ const Dashboard = () => {
             ) : (
               <>
                 <div className="dashboard-ai-grid">
-                  <div className="dashboard-ai-score">
+                  <div className="dashboard-ai-score insight-card-blue insight-emphasis">
                     <div className="dashboard-ai-score-label">Behavior</div>
                     <div className="dashboard-ai-score-value" style={{ color: '#16a34a' }}>
                       {aiData?.behavior || 'Unknown'}
@@ -219,7 +219,7 @@ const Dashboard = () => {
                     <div className="dashboard-row-subtitle">Current pattern detected from your recent transactions</div>
                   </div>
 
-                  <div className="dashboard-ai-score">
+                  <div className="dashboard-ai-score eco-score-card">
                     <div className="dashboard-ai-score-label">Eco score</div>
                     <div className="dashboard-ai-score-value" style={{ color: ecoScoreColor }}>
                       {ecoScore}
@@ -230,13 +230,13 @@ const Dashboard = () => {
                     </div>
                     <div className="dashboard-progress">
                       <div
-                        className="dashboard-progress-bar"
-                        style={{ width: `${ecoScore}%`, backgroundColor: ecoScoreColor }}
+                        className="dashboard-progress-bar eco"
+                        style={{ width: `${ecoScore}%` }}
                       />
                     </div>
                   </div>
 
-                  <div className="dashboard-ai-score">
+                  <div className="dashboard-ai-score wellbeing-score-card">
                     <div className="dashboard-ai-score-label">Wellbeing score</div>
                     <div className="dashboard-ai-score-value" style={{ color: wellbeingScoreColor }}>
                       {wellbeingScore}
@@ -247,8 +247,8 @@ const Dashboard = () => {
                     </div>
                     <div className="dashboard-progress">
                       <div
-                        className="dashboard-progress-bar"
-                        style={{ width: `${wellbeingScore}%`, backgroundColor: wellbeingScoreColor }}
+                        className="dashboard-progress-bar wellbeing"
+                        style={{ width: `${wellbeingScore}%` }}
                       />
                     </div>
                   </div>
