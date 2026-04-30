@@ -14,6 +14,8 @@ import {
 } from 'lucide-react';
 import { getAIInsights, transactionService } from '../services/api';
 import { clampScore, getScoreColor, parseAIInsightsResponse } from '../utils/aiInsights';
+import AppLoadingState from '../components/AppLoadingState';
+import EmptyStateCard from '../components/EmptyStateCard';
 
 const Dashboard = () => {
   const [stats, setStats] = useState(null);
@@ -78,14 +80,7 @@ const Dashboard = () => {
   };
 
   if (loading) {
-    return (
-      <div className="loading-container">
-        <div>
-          <div className="spinner"></div>
-          <p>Loading your finance workspace...</p>
-        </div>
-      </div>
-    );
+    return <AppLoadingState title="Loading your finance dashboard" message="Gathering balances, transactions, and analytics..." />;
   }
 
   const summary = stats?.summary || {};
@@ -94,10 +89,6 @@ const Dashboard = () => {
   const wellbeingScore = clampScore(aiData?.wellbeingScore) ?? 50;
   const ecoScoreColor = getScoreColor(ecoScore);
   const wellbeingScoreColor = getScoreColor(wellbeingScore);
-  const expenseCategories = (stats?.categoryStats || [])
-    .filter((entry) => entry._id.type === 'expense')
-    .sort((a, b) => b.total - a.total)
-    .slice(0, 5);
 
   return (
     <div className="dashboard-page">
@@ -126,6 +117,21 @@ const Dashboard = () => {
           <div className="dashboard-pill">
             <Wallet size={16} />
             <span>Web workspace</span>
+          </div>
+        </div>
+
+        <div className="dashboard-hero-insights">
+          <div className="dashboard-hero-chip">
+            <span>Income</span>
+            <strong>{formatCurrency(summary.totalIncome)}</strong>
+          </div>
+          <div className="dashboard-hero-chip">
+            <span>Expenses</span>
+            <strong>{formatCurrency(summary.totalExpenses)}</strong>
+          </div>
+          <div className="dashboard-hero-chip">
+            <span>Savings rate</span>
+            <strong>{summary.savingsRate || 0}%</strong>
           </div>
         </div>
       </section>
@@ -270,44 +276,28 @@ const Dashboard = () => {
             )}
           </section>
 
-          <section className="dashboard-panel">
-            <div className="page-header" style={{ marginBottom: '0.75rem' }}>
+          <section className="dashboard-panel analytics-preview-panel">
+            <div className="page-header analytics-header" style={{ marginBottom: '1rem' }}>
               <div>
-                <h1 style={{ fontSize: '1.55rem', marginBottom: '0.25rem' }}>Recent Transactions</h1>
-                <p>Your latest ledger activity, refreshed from the API.</p>
+                <h1 style={{ fontSize: '1.55rem', marginBottom: '0.25rem' }}>Expense Analytics</h1>
+                <p>Open the dedicated analytics page for monthly spend, category charts, and activity detail.</p>
               </div>
-              <Link to="/transactions" className="btn btn-outline">Open Ledger</Link>
+              <Link to="/analytics" className="btn btn-outline">View Analytics</Link>
             </div>
 
-            {recentTransactions.length > 0 ? (
-              <div className="dashboard-list">
-                {recentTransactions.map((transaction) => (
-                  <div key={transaction._id} className="dashboard-row">
-                    <div className="dashboard-row-main">
-                      <div className="dashboard-row-title">{transaction.description}</div>
-                      <div className="dashboard-row-subtitle">{transaction.category}</div>
-                    </div>
+            <div className="analytics-grid">
+              <article className="analytics-highlight-card">
+                <span className="analytics-kicker">Expenses tracked</span>
+                <strong>{formatCurrency(summary.totalExpenses)}</strong>
+                <p>Current total expense volume from your ledger</p>
+              </article>
 
-                    <div className="dashboard-row-value">
-                      <strong style={{ color: transaction.type === 'income' ? '#86efac' : '#fda4af' }}>
-                        {transaction.type === 'income' ? '+' : '-'}
-                        {formatCurrency(transaction.amount)}
-                      </strong>
-                      <span>{formatDate(transaction.date)}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="empty-state">
-                <div>
-                  <strong style={{ display: 'block', color: 'var(--text)', marginBottom: '0.4rem' }}>
-                    No transactions yet
-                  </strong>
-                  <span>Add your first transaction to populate the desktop dashboard.</span>
-                </div>
-              </div>
-            )}
+              <article className="analytics-highlight-card analytics-highlight-card-soft">
+                <span className="analytics-kicker">Recent transactions</span>
+                <strong>{recentTransactions.length}</strong>
+                <p>Fresh records available for deeper analysis</p>
+              </article>
+            </div>
           </section>
         </div>
 
@@ -336,9 +326,13 @@ const Dashboard = () => {
 
           <section className="dashboard-panel">
             <div className="dashboard-stat-label">Top expense categories</div>
-            {expenseCategories.length > 0 ? (
+            {(stats?.categoryStats || []).filter((entry) => entry._id.type === 'expense').slice(0, 5).length > 0 ? (
               <div className="dashboard-mini-list">
-                {expenseCategories.map((entry) => (
+                {(stats?.categoryStats || [])
+                  .filter((entry) => entry._id.type === 'expense')
+                  .sort((a, b) => b.total - a.total)
+                  .slice(0, 5)
+                  .map((entry) => (
                   <div key={entry._id.category} className="dashboard-mini-item">
                     <span>{entry._id.category}</span>
                     <strong>{formatCurrency(entry.total)}</strong>
@@ -346,10 +340,11 @@ const Dashboard = () => {
                 ))}
               </div>
             ) : (
-              <div className="dashboard-advice" style={{ marginTop: '1rem' }}>
-                <strong>No category data yet</strong>
-                <span>Add expenses to surface your highest spending buckets.</span>
-              </div>
+              <EmptyStateCard
+                title="No category data yet"
+                description="Add a few expense transactions and your highest spending buckets will appear here."
+                action={<Link to="/transactions" className="btn btn-outline">Add Transactions</Link>}
+              />
             )}
           </section>
         </aside>

@@ -9,6 +9,7 @@ import AuthModal from './components/AuthModal';
 
 import Dashboard from './pages/Dashboard';
 import Transactions from './pages/Transactions';
+import ExpenseAnalyticsPage from './pages/ExpenseAnalytics';
 import Insights from './pages/Insights';
 import Profile from './pages/Profile';
 import './App.css';
@@ -18,7 +19,8 @@ function App() {
     <AuthProvider>
       <Router>
         <div className="app">
-          <Navbar />\n          <AuthModal />
+          <Navbar />
+          <AuthModal />
           <main className="main-content">
             <Routes>
               <Route path="/" element={<Home />} />
@@ -37,6 +39,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Transactions />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/analytics"
+                element={
+                  <ProtectedRoute>
+                    <ExpenseAnalyticsPage />
                   </ProtectedRoute>
                 }
               />

@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
   ArrowLeftRight,
+  ChartPie,
   LayoutDashboard,
   LogOut,
   Menu,
@@ -346,6 +347,7 @@ const Navbar = () => {
   const navLinks = [
     { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { path: '/transactions', label: 'Transactions', icon: ArrowLeftRight },
+    { path: '/analytics', label: 'Analytics', icon: ChartPie },
     { path: '/insights', label: 'AI Insights', icon: Sparkles },
     { path: '/profile', label: 'Profile', icon: UserRound }
   ];

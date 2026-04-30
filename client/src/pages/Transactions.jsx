@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { transactionService } from '../services/api';
 import { toast } from 'react-toastify';
 import { FiPlus, FiEdit2, FiTrash2, FiUpload, FiFilter, FiX, FiDownload } from 'react-icons/fi';
+import AppLoadingState from '../components/AppLoadingState';
+import EmptyStateCard from '../components/EmptyStateCard';
 
 const CATEGORIES = {
   expense: [
@@ -314,9 +317,7 @@ const Transactions = () => {
 
       {/* Transactions List */}
       {loading ? (
-        <div className="loading-container">
-          <div className="spinner"></div>
-        </div>
+        <AppLoadingState title="Loading transactions" message="Refreshing your ledger and filters..." />
       ) : transactions.length > 0 ? (
         <>
           <div className="transactions-table-container">
@@ -375,6 +376,43 @@ const Transactions = () => {
             </table>
           </div>
 
+          <div className="transactions-mobile-list">
+            {transactions.map(transaction => (
+              <article key={transaction._id} className="transaction-mobile-card">
+                <div className="transaction-mobile-top">
+                  <div>
+                    <strong>{transaction.description}</strong>
+                    <span>{transaction.category}</span>
+                  </div>
+                  <span className={`amount ${transaction.type}`}>
+                    {transaction.type === 'income' ? '+' : '-'}
+                    {formatCurrency(transaction.amount)}
+                  </span>
+                </div>
+
+                <div className="transaction-mobile-bottom">
+                  <span>{formatDate(transaction.date)}</span>
+                  <div className="action-buttons">
+                    <button
+                      className="btn-icon"
+                      onClick={() => handleEdit(transaction)}
+                      title="Edit"
+                    >
+                      <FiEdit2 />
+                    </button>
+                    <button
+                      className="btn-icon delete"
+                      onClick={() => handleDelete(transaction._id)}
+                      title="Delete"
+                    >
+                      <FiTrash2 />
+                    </button>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+
           {/* Pagination */}
           {pagination.totalPages > 1 && (
             <div className="pagination">
@@ -397,10 +435,11 @@ const Transactions = () => {
           )}
         </>
       ) : (
-        <div className="empty-state">
-          <h3>No transactions found</h3>
-          <p>Add your first transaction or upload a CSV file to get started.</p>
-        </div>
+        <EmptyStateCard
+          title="No transactions found"
+          description="Start with a manual transaction or upload a CSV to build your dashboard and analytics."
+          action={<Link to="/analytics" className="btn btn-outline">Open Analytics</Link>}
+        />
       )}
 
       {/* Add/Edit Modal */}

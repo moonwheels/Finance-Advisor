@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { authService } from '../services/api';
 import { toast } from 'react-toastify';
 import { FiUser, FiMail, FiDollarSign, FiTarget, FiSave, FiLock } from 'react-icons/fi';
+import EmptyStateCard from '../components/EmptyStateCard';
 
 const Profile = () => {
   const { user, updateUser } = useAuth();
@@ -60,8 +61,8 @@ const Profile = () => {
       return;
     }
 
-    if (passwordData.newPassword.length < 6) {
-      toast.error('Password must be at least 6 characters');
+    if (passwordData.newPassword.length < 8) {
+      toast.error('Password must be at least 8 characters');
       return;
     }
 
@@ -69,6 +70,7 @@ const Profile = () => {
 
     try {
       await authService.updateProfile({
+        currentPassword: passwordData.currentPassword,
         password: passwordData.newPassword
       });
 
@@ -98,8 +100,10 @@ const Profile = () => {
   return (
     <div className="profile-page">
       <div className="page-header">
-        <h1>Profile Settings</h1>
-        <p>Manage your account and financial goals</p>
+        <div>
+          <h1>Profile Settings</h1>
+          <p>Manage your account details, budgets, and password from one clean workspace.</p>
+        </div>
       </div>
 
       <div className="profile-grid">
@@ -184,14 +188,31 @@ const Profile = () => {
         <div className="profile-card">
           <h2>Security</h2>
           {!showPasswordForm ? (
-            <button 
-              className="btn btn-outline"
-              onClick={() => setShowPasswordForm(true)}
-            >
-              <FiLock /> Change Password
-            </button>
+            <EmptyStateCard
+              title="Keep your account secure"
+              description="Update your password regularly to protect your financial data."
+              action={
+                <button
+                  className="btn btn-outline"
+                  onClick={() => setShowPasswordForm(true)}
+                >
+                  <FiLock /> Change Password
+                </button>
+              }
+            />
           ) : (
             <form onSubmit={handlePasswordChange}>
+              <div className="form-group">
+                <label>Current Password</label>
+                <input
+                  type="password"
+                  value={passwordData.currentPassword}
+                  onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
+                  placeholder="Enter current password"
+                  required
+                />
+              </div>
+
               <div className="form-group">
                 <label>New Password</label>
                 <input
@@ -200,7 +221,7 @@ const Profile = () => {
                   onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
                   placeholder="Enter new password"
                   required
-                  minLength={6}
+                  minLength={8}
                 />
               </div>
 

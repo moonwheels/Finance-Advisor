@@ -9,6 +9,8 @@ const fs = require('fs');
 const getTransactions = async (req, res) => {
   try {
     const { startDate, endDate, category, type, page = 1, limit = 50 } = req.query;
+    const parsedPage = Math.max(parseInt(page, 10) || 1, 1);
+    const parsedLimit = Math.min(Math.max(parseInt(limit, 10) || 50, 1), 100);
     
     let query = { user: req.user._id };
 
@@ -21,17 +23,19 @@ const getTransactions = async (req, res) => {
     if (category) query.category = category;
     if (type) query.type = type;
 
-    const transactions = await Transaction.find(query)
-      .sort({ date: -1 })
-      .limit(limit * 1)
-      .skip((page - 1) * limit);
-
-    const total = await Transaction.countDocuments(query);
+    const [transactions, total] = await Promise.all([
+      Transaction.find(query)
+        .sort({ date: -1 })
+        .limit(parsedLimit)
+        .skip((parsedPage - 1) * parsedLimit)
+        .lean(),
+      Transaction.countDocuments(query)
+    ]);
 
     res.json({
       transactions,
-      totalPages: Math.ceil(total / limit),
-      currentPage: page,
+      totalPages: Math.ceil(total / parsedLimit),
+      currentPage: parsedPage,
       total
     });
   } catch (error) {
@@ -48,7 +52,7 @@ const getTransaction = async (req, res) => {
     const transaction = await Transaction.findOne({
       _id: req.params.id,
       user: req.user._id
-    });
+    }).lean();
 
     if (!transaction) {
       return res.status(404).json({ message: 'Transaction not found' });
@@ -260,43 +264,41 @@ const getTransactionStats = async (req, res) => {
     }
 
     // Get category breakdown
-    const categoryStats = await Transaction.aggregate([
-      { $match: dateFilter },
-      {
-        $group: {
-          _id: { category: '$category', type: '$type' },
-          total: { $sum: '$amount' },
-          count: { $sum: 1 }
+    const [categoryStats, monthlyTrends, totals] = await Promise.all([
+      Transaction.aggregate([
+        { $match: dateFilter },
+        {
+          $group: {
+            _id: { category: '$category', type: '$type' },
+            total: { $sum: '$amount' },
+            count: { $sum: 1 }
+          }
+        },
+        { $sort: { total: -1 } }
+      ]),
+      Transaction.aggregate([
+        { $match: dateFilter },
+        {
+          $group: {
+            _id: {
+              year: { $year: '$date' },
+              month: { $month: '$date' },
+              type: '$type'
+            },
+            total: { $sum: '$amount' }
+          }
+        },
+        { $sort: { '_id.year': 1, '_id.month': 1 } }
+      ]),
+      Transaction.aggregate([
+        { $match: dateFilter },
+        {
+          $group: {
+            _id: '$type',
+            total: { $sum: '$amount' }
+          }
         }
-      },
-      { $sort: { total: -1 } }
-    ]);
-
-    // Get monthly trends
-    const monthlyTrends = await Transaction.aggregate([
-      { $match: dateFilter },
-      {
-        $group: {
-          _id: {
-            year: { $year: '$date' },
-            month: { $month: '$date' },
-            type: '$type'
-          },
-          total: { $sum: '$amount' }
-        }
-      },
-      { $sort: { '_id.year': 1, '_id.month': 1 } }
-    ]);
-
-    // Get totals
-    const totals = await Transaction.aggregate([
-      { $match: dateFilter },
-      {
-        $group: {
-          _id: '$type',
-          total: { $sum: '$amount' }
-        }
-      }
+      ])
     ]);
 
     const income = totals.find(t => t._id === 'income')?.total || 0;

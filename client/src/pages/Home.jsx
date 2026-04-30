@@ -7,6 +7,7 @@ const CountUp = ({ end, duration = 1500, prefix = "$" }) => {
 
   useEffect(() => {
     let startTimestamp = null;
+    let animationFrameId;
     const step = (timestamp) => {
       if (!startTimestamp) startTimestamp = timestamp;
       const progress = Math.min((timestamp - startTimestamp) / duration, 1);
@@ -14,10 +15,14 @@ const CountUp = ({ end, duration = 1500, prefix = "$" }) => {
       const easeProgress = 1 - Math.pow(1 - progress, 3);
       setCount(Math.floor(easeProgress * end));
       if (progress < 1) {
-        window.requestAnimationFrame(step);
+        animationFrameId = window.requestAnimationFrame(step);
       }
     };
-    window.requestAnimationFrame(step);
+    animationFrameId = window.requestAnimationFrame(step);
+
+    return () => {
+      window.cancelAnimationFrame(animationFrameId);
+    };
   }, [end, duration]);
 
   return <span>{prefix}{count.toLocaleString()}</span>;

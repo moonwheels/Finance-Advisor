@@ -1,16 +1,12 @@
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import AppLoadingState from './AppLoadingState';
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
 
   if (loading) {
-    return (
-      <div className="loading-container">
-        <div className="spinner"></div>
-        <p>Loading...</p>
-      </div>
-    );
+    return <AppLoadingState title="Loading your account" message="Checking your session and preparing the app..." />;
   }
 
   if (!isAuthenticated) {

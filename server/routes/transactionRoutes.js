@@ -4,6 +4,7 @@ const multer = require('multer');
 const path = require('path');
 const { body } = require('express-validator');
 const { protect } = require('../middleware/auth');
+const { apiLimiter } = require('../middleware/rateLimit');
 const {
   getTransactions,
   getTransaction,
@@ -38,6 +39,8 @@ const upload = multer({
   fileFilter,
   limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
 });
+
+router.use(apiLimiter);
 
 // Validation rules
 const transactionValidation = [

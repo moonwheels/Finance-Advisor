@@ -3,27 +3,35 @@ import { aiService } from '../services/api';
 import { toast } from 'react-toastify';
 import { FiTrendingUp, FiAlertCircle, FiCheckCircle, FiTarget, FiDollarSign, FiPieChart, FiRefreshCw } from 'react-icons/fi';
 import { clampScore, parseAIInsightsResponse } from '../utils/aiInsights';
+import AppLoadingState from '../components/AppLoadingState';
+import EmptyStateCard from '../components/EmptyStateCard';
+
+const INITIAL_LOADING_STATE = {
+  insights: false,
+  budget: false,
+  tips: false
+};
 
 const Insights = () => {
   const [insights, setInsights] = useState(null);
   const [budgetSuggestions, setBudgetSuggestions] = useState(null);
   const [savingTips, setSavingTips] = useState(null);
-  const [loading, setLoading] = useState({
-    insights: true,
-    budget: true,
-    tips: true
-  });
+  const [loading, setLoading] = useState(INITIAL_LOADING_STATE);
   const [activeTab, setActiveTab] = useState('insights');
 
   useEffect(() => {
-    fetchAllData();
-  }, []);
+    if (activeTab === 'insights' && !insights && !loading.insights) {
+      fetchInsights();
+    }
 
-  const fetchAllData = async () => {
-    fetchInsights();
-    fetchBudgetSuggestions();
-    fetchSavingTips();
-  };
+    if (activeTab === 'budget' && !budgetSuggestions && !loading.budget) {
+      fetchBudgetSuggestions();
+    }
+
+    if (activeTab === 'tips' && !savingTips && !loading.tips) {
+      fetchSavingTips();
+    }
+  }, [activeTab, insights, budgetSuggestions, savingTips, loading.insights, loading.budget, loading.tips]);
 
   const fetchInsights = async () => {
     try {
@@ -61,6 +69,20 @@ const Insights = () => {
     }
   };
 
+  const handleRefresh = () => {
+    if (activeTab === 'insights') {
+      fetchInsights();
+      return;
+    }
+
+    if (activeTab === 'budget') {
+      fetchBudgetSuggestions();
+      return;
+    }
+
+    fetchSavingTips();
+  };
+
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -84,16 +106,16 @@ const Insights = () => {
 
   const renderInsightsTab = () => {
     if (loading.insights) {
-      return (
-        <div className="loading-container">
-          <div className="spinner"></div>
-          <p>Analyzing your finances...</p>
-        </div>
-      );
+      return <AppLoadingState title="Analyzing your finances" message="Generating behavior, eco, and wellbeing insights..." />;
     }
 
     if (!insights) {
-      return <p className="no-data">No insights available</p>;
+      return (
+        <EmptyStateCard
+          title="No AI insights available"
+          description="Add more transaction history or refresh later to generate stronger financial patterns."
+        />
+      );
     }
 
     const ecoScore = clampScore(insights.ecoScore);
@@ -199,16 +221,16 @@ const Insights = () => {
 
   const renderBudgetTab = () => {
     if (loading.budget) {
-      return (
-        <div className="loading-container">
-          <div className="spinner"></div>
-          <p>Calculating budget suggestions...</p>
-        </div>
-      );
+      return <AppLoadingState title="Building budget suggestions" message="Reviewing category totals and spend patterns..." />;
     }
 
     if (!budgetSuggestions) {
-      return <p className="no-data">No budget suggestions available</p>;
+      return (
+        <EmptyStateCard
+          title="No budget suggestions available"
+          description="Budget recommendations will appear once the app has enough transaction context."
+        />
+      );
     }
 
     const { suggestions, currentSpending } = budgetSuggestions;
@@ -272,19 +294,20 @@ const Insights = () => {
 
   const renderTipsTab = () => {
     if (loading.tips) {
-      return (
-        <div className="loading-container">
-          <div className="spinner"></div>
-          <p>Generating saving tips...</p>
-        </div>
-      );
+      return <AppLoadingState title="Generating saving tips" message="Looking for practical ways to improve your savings..." />;
     }
 
     if (!savingTips) {
-      return <p className="no-data">No saving tips available</p>;
+      return (
+        <EmptyStateCard
+          title="No saving tips available"
+          description="Try refreshing after you add more transactions to unlock targeted suggestions."
+        />
+      );
     }
 
     const { tips, topSpendingCategories } = savingTips;
+    const topCategoryAmount = topSpendingCategories?.[0]?.[1] || 0;
 
     return (
       <div className="tips-content">
@@ -302,7 +325,7 @@ const Insights = () => {
                     <div 
                       className="spending-bar-fill"
                       style={{ 
-                        width: `${(amount / topSpendingCategories[0][1]) * 100}%`,
+                        width: `${topCategoryAmount > 0 ? (amount / topCategoryAmount) * 100 : 0}%`,
                         backgroundColor: `hsl(${index * 40}, 70%, 50%)`
                       }}
                     />
@@ -335,7 +358,7 @@ const Insights = () => {
           <h1>AI Financial Insights</h1>
           <p>Smart analysis and recommendations for your finances</p>
         </div>
-        <button className="btn btn-outline" onClick={fetchAllData}>
+        <button className="btn btn-outline" onClick={handleRefresh}>
           <FiRefreshCw /> Refresh
         </button>
       </div>
